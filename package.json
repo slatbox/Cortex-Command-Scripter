@@ -54,8 +54,8 @@
     },
 	"repository": {
         "type": "git",
-        "url": "https://gitee.com/saltbox1211/cortex-command-scripter"
+        "url": "https://github.com/slatbox/Cortex-Command-Scripter"
     },
-    "homepage": "https://gitee.com/saltbox1211/cortex-command-scripter"
+    "homepage": "https://github.com/slatbox/Cortex-Command-Scripter"
 
 }
