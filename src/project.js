@@ -48,6 +48,39 @@ class ProjectManager{
         await common_util.Util.openFolder(full_project_path)
         vscode.window.showInformationMessage('Project created successfully!');
     }
+    async createSettingFolder()
+    {
+        const options = {
+            canSelectFiles: false,
+            canSelectFolders: true,
+            canSelectMany: false
+        };
+       
+        var pro_dir_path = undefined
+        await vscode.window.showOpenDialog(options).then(async (paths) => {
+            if(paths && paths.length > 0){
+                pro_dir_path = paths[0].path.substring(1,paths[0].path.length)
+            }
+        });
+        if(pro_dir_path == undefined)
+        {
+            vscode.window.showInformationMessage('Creating setting folder canceled');
+            return
+        }
+        var pro_path = pro_dir_path
+
+        if(fs.existsSync(path.join(pro_path,'.vscode')))
+        {
+            vscode.window.showInformationMessage('Setting folder already exists');
+            return
+        }
+        await fs.mkdirSync(path.join(pro_path,'.vscode'))
+        var cc_lua_doc_path = path.join(this.context.extensionPath, 'LuaAPI');
+        cc_lua_doc_path = cc_lua_doc_path.replaceAll("\\","\\\\")
+        var setting_content = '{"Lua.workspace.library": ["' + cc_lua_doc_path+'"],"Lua.IntelliSense.traceLocalSet": true}'
+        await fs.writeFileSync(path.join(pro_path,'/.vscode/settings.json'),setting_content)
+        vscode.window.showInformationMessage('Setting folder created successfully!');
+    }
     async createProjectFiles(pro_path,pro_name)
     {
         const tem_dir_path = path.join(this.context.extensionPath, 'templates');

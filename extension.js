@@ -18,8 +18,11 @@ function activate(context) {
 	let disposable = vscode.commands.registerCommand('cortex-command-scripter.CC-Create-Project', function () {
 		project_man.createProject()
 	});
-
+	let disposable2 = vscode.commands.registerCommand('cortex-command-scripter.CC-Create-Setting-Folder', function () {
+		project_man.createSettingFolder()
+	});
 	context.subscriptions.push(disposable);
+	context.subscriptions.push(disposable2);
 }
 
 // this method is called when your extension is deactivated

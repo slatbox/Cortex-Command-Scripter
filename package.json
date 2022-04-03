@@ -2,7 +2,7 @@
   "name": "cortex-command-scripter",
 	"displayName": "Cortex Command Scripter",
 	"description": "Support for writing Cortex Command lua scripts.",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"engines": {
 		"vscode": "^1.65.0"
 	},
@@ -14,20 +14,23 @@
 	],
 	"activationEvents": [
 		"onLanguage:lua",
-        "onCommand:cortex-command-scripter.CC-Create-Project"
+        "onCommand:cortex-command-scripter.CC-Create-Project",
+		"onCommand:cortex-command-scripter.CC-Create-Setting-Folder"
 	],
 	"main": "./extension.js",
 	"contributes": {
 		"commands": [{
             "command": "cortex-command-scripter.CC-Create-Project",
             "title": "CC Create Project"
-
+		},
+		{
+            "command": "cortex-command-scripter.CC-Create-Setting-Folder",
+            "title": "CC Create Setting Folder"
 		}],
 		"snippets": [
 			{
 				
 				"language": "lua",
-				
 				"path": "./snippets/CCSnippets.json"
 			}
 		]
@@ -48,6 +51,11 @@
         "mocha": "^9.2.1",
         "typescript": "^4.5.5",
         "@vscode/test-electron": "^2.1.2"
-    }
+    },
+	"repository": {
+        "type": "git",
+        "url": "https://gitee.com/saltbox1211/cortex-command-scripter"
+    },
+    "homepage": "https://gitee.com/saltbox1211/cortex-command-scripter"
 
 }
