@@ -1,0 +1,467 @@
+---## Class
+---The singleton manager of all movable objects in the RTE.
+local MovableManager = {}
+
+------------------------------Properties------------------------------
+---
+---    The max number of dropped items that will be reached before the first dropped with be copied to the terrain.
+---    An int spefifying the limit.
+---
+MovableManager.MaxDroppedItems = nil
+---
+---    The entity temporarily to be tranferred to the Lua interface for its preset-defined scripts to be run on it.
+---    The entity pointer made accessible to the Lua state.
+---
+MovableManager.ScriptedEntity = nil
+---### Description:
+---
+---Gets a MO from its MOID. Note that MOID's are only valid during the same frame as they were assigned to the MOs!
+---### Arguments:
+---
+---Arg1:    The MOID to get the matching MO from.
+---
+---### Return Value:
+---
+---A pointer to the requested MovableObject instance. 0 if no MO with that
+function MovableManager:GetMOFromID(p1)end
+---### Description:
+---
+---Gets the number of MOID's currently in use this frame.
+---### Arguments:
+---
+---Arg1:    None.
+---
+---### Return Value:
+---
+---The count of MOIDs in use this frame.
+function MovableManager:GetMOIDCount()end
+---### Description:
+---
+---Returns MO count for specified team
+---### Arguments:
+---
+---Arg1:    Team to count MO's
+---
+---### Return Value:
+---
+---MO's count owned by this team
+function MovableManager:GetTeamMOIDCount(p1)end
+---### Description:
+---
+---Clears out all MovableObject:s out of this. Effectively empties the world of anything moving, without resetting all
+---    of this' settings.
+---### Arguments:
+---
+---Arg1:    None.
+---
+---### Return Value:
+---
+---None.
+function MovableManager:PurgeAllMOs()end
+---### Description:
+---
+---Get a pointer to the first Actor in the internal Actor list that is of a specifc group, alternatively the first one
+---    AFTER a specific actor!
+---### Arguments:
+---
+---Arg1:    Which group to try to get an Actor for.
+---Arg2:    A pointer to an Actor to use as starting point in the forward search.
+---Arg3:    Ownership NOT xferred!
+---
+---### Return Value:
+---
+---An Actor pointer to the requested team's first Actor encountered in the list. 0 if there are no Actors of that
+function MovableManager:GetNextActorInGroup(p1,p2,p3)end
+---### Description:
+---
+---Get a pointer to the last Actor in the internal Actor list that is of a specifc group, alternatively the last one
+---    BEFORE a specific actor!
+---### Arguments:
+---
+---Arg1:    Which group to try to get an Actor for.
+---Arg2:    A pointer to an Actor to use as starting point in the backward search.
+---Arg3:    Ownership NOT xferred!
+---
+---### Return Value:
+---
+---An Actor pointer to the requested team's last Actor encountered in the list. 0 if there are no Actors of that
+function MovableManager:GetPrevActorInGroup(p1,p2,p3)end
+---### Description:
+---
+---Get a pointer to the first Actor in the internal Actor list that is of a specifc team, alternatively the first one
+---    AFTER a specific actor!
+---### Arguments:
+---
+---Arg1:    Which team to try to get an Actor for. 0 means first team, 1 means 2nd.
+---Arg2:    A pointer to an Actor to use as starting point in the forward search.
+---Arg3:    Ownership NOT xferred!
+---
+---### Return Value:
+---
+---An Actor pointer to the requested team's first Actor encountered in the list. 0 if there are no Actors of that
+function MovableManager:GetNextTeamActor(p1,p2,p3)end
+---### Description:
+---
+---Get a pointer to the last Actor in the internal Actor list that is of a specifc team, alternatively the last one
+---    BEFORE a specific actor!
+---### Arguments:
+---
+---Arg1:    Which team to try to get an Actor for. 0 means first team, 1 means 2nd.
+---Arg2:    A pointer to an Actor to use as starting point in the backward search.
+---Arg3:    Ownership NOT xferred!
+---
+---### Return Value:
+---
+---An Actor pointer to the requested team's last Actor encountered in the list. 0 if there are no Actors of that
+function MovableManager:GetPrevTeamActor(p1,p2,p3)end
+---### Description:
+---
+---Get a pointer to an Actor in the internal Actor list that is of a specifc team and closest to a specific scene
+---    point.
+---### Arguments:
+---
+---Arg1:    Which team to try to get an Actor for. 0 means first team, 1 means 2nd.
+---Arg2:    The player to get the Actor for. This affects which brain can be marked.
+---Arg3:    The Scene point to search for the closest to.
+---Arg4:    The maximum radius around that scene point to search.
+---Arg5:    A float to be filled out with the distance of the returned closest to the search point. Will be unaltered if no
+---Arg6:    object was found within radius.
+---Arg7:    An Actor to exclude from the search. OINT.
+---
+---### Return Value:
+---
+---An Actor pointer to the requested team's Actor closest to the Scene point, but not outside the max radius. If no
+function MovableManager:GetClosestTeamActor(p1,p2,p3,p4,p5,p6,p7)end
+---### Description:
+---
+---Get a pointer to an Actor in the internal Actor list that is is not of the specified team and closest to a specific
+---    scene point.
+---### Arguments:
+---
+---Arg1:    Which team to try to get an enemy Actor for. NOTEAM means all teams.
+---Arg2:    The Scene point to search for the closest to.
+---Arg3:    The maximum radius around that scene point to search.
+---Arg4:    A vector to be filled out with the distance of the returned closest to the search point. Will be unaltered if no
+---Arg5:    object was found within radius.
+---
+---### Return Value:
+---
+---An Actor pointer to the enemy closest to the Scene point, but not outside the max radius. If no Actor was found
+function MovableManager:GetClosestEnemyActor(p1,p2,p3,p4,p5)end
+---### Description:
+---
+---Get a pointer to first best Actor in the internal Actor list that is of a specifc team.
+---### Arguments:
+---
+---Arg1:    Which team to try to get an Actor for. 0 means first team, 1 means 2nd.
+---Arg2:    The player to get the Actor for. This affects which brain can be marked.
+---
+---### Return Value:
+---
+---An Actor pointer to the first one of the requested team. If no Actor is in that team, 0 is returned.
+function MovableManager:GetFirstTeamActor(p1,p2)end
+---### Description:
+---
+---Get a pointer to an Actor in the internal Actor list that is closest to a specific scene point.
+---### Arguments:
+---
+---Arg1:    Which team to try to get an Actor for. 0 means first team, 1 means 2nd.
+---Arg2:    The Scene point to search for the closest to.
+---Arg3:    The maximum radius around that scene point to search.
+---Arg4:    A float to be filled out with the distance of the returned closest to the search point. Will be unaltered if no
+---Arg5:    object was found within radius.
+---Arg6:    An Actor to exclude from the search. OINT.
+---
+---### Return Value:
+---
+---An Actor pointer to the requested Actor closest to the Scene point, but not outside the max radius. If no Actor
+function MovableManager:GetClosestActor(p1,p2,p3,p4,p5,p6)end
+---### Description:
+---
+---Get a pointer to the brain actor of a specific team that is closest to a scene point. OINT.
+---### Arguments:
+---
+---Arg1:    Which team to try to get the brain for. 0 means first team, 1 means 2nd.
+---Arg2:    The point in the scene where to look for the closest opposite team brain.
+---
+---### Return Value:
+---
+---An Actor pointer to the requested team's brain closest to the point.
+function MovableManager:GetClosestBrainActor(p1,p2)end
+---### Description:
+---
+---Get a pointer to the brain actor of a specific team that is closest to a scene point. OINT.
+---### Arguments:
+---
+---Arg1:    Which team to try to get the brain for. 0 means first team, 1 means 2nd.
+---Arg2:    The point in the scene where to look for the closest opposite team brain.
+---
+---### Return Value:
+---
+---An Actor pointer to the requested team's brain closest to the point.
+function MovableManager:GetFirstBrainActor(p1,p2)end
+---### Description:
+---
+---Get a pointer to the brain actor NOT of a specific team that is closest to a scene point. OINT.
+---### Arguments:
+---
+---Arg1:    Which team to NOT get the brain for. 0 means first team, 1 means 2nd.
+---Arg2:    The point where to look for the closest brain not of this team.
+---
+---### Return Value:
+---
+---An Actor pointer to the requested brain closest to the point.
+function MovableManager:GetClosestOtherBrainActor(p1,p2)end
+---### Description:
+---
+---Get a pointer to the brain actor NOT of a specific team. OINT.
+---### Arguments:
+---
+---Arg1:    Which team to NOT get the brain for. 0 means first team, 1 means 2nd.
+---
+---### Return Value:
+---
+---An Actor pointer to the requested brain of that team.
+function MovableManager:GetFirstOtherBrainActor(p1)end
+---### Description:
+---
+---Get a pointer to the first brain actor of a specific team which hasn't been assigned to a player yet.
+---### Arguments:
+---
+---Arg1:    Which team to try to get the brain for. 0 means first team, 1 means 2nd.
+---
+---### Return Value:
+---
+---An Actor pointer to the requested team's first brain encountered in the list that hasn't been assigned to a player.
+function MovableManager:GetUnassignedBrain(p1)end
+---### Description:
+---
+---Gets the number of particles (MOPixel:s) currently held.
+---### Arguments:
+---
+---Arg1:    None.
+---
+---### Return Value:
+---
+---The number of particles.
+function MovableManager:GetParticleCount()end
+---### Description:
+---
+---Gets the global default AtomGroup resolution setting.
+---### Arguments:
+---
+---Arg1:    None.
+---
+---### Return Value:
+---
+---The global AtomGroup resolution setting, from 1 (highest res) upward.
+function MovableManager:GetAGResolution()end
+---### Description:
+---
+---Gets the global setting for how much splash MOPixels should be created an MO penetrates the terrain deeply.
+---### Arguments:
+---
+---Arg1:    None.
+---
+---### Return Value:
+---
+---A float with the global splash amount setting, form 1.0 to 0.0.
+function MovableManager:GetSplashRatio()end
+---### Description:
+---
+---Sets this to draw HUD lines for a specific team's roster this frame.
+---### Arguments:
+---
+---Arg1:    Which team to have lines drawn of.
+---
+---### Return Value:
+---
+---None.
+function MovableManager:SortTeamRoster(p1)end
+---### Description:
+---
+---Removes an Actor from the internal list of MO:s. After the Actor is removed, ownership is effectively released and
+---    transferred to whatever client called this method.
+---### Arguments:
+---
+---Arg1:    A pointer to the MovableObject to remove.
+---
+---### Return Value:
+---
+---Whether the object was found in the particle list, and consequently removed. If the particle entry wasn't found,
+function MovableManager:RemoveActor(p1)end
+---### Description:
+---
+---Removes a pickup-able MovableObject item from the internal list of
+---    MO:s. After the item is removed, ownership is effectively released and transferred to whatever client called this
+---    method.
+---### Arguments:
+---
+---Arg1:    A pointer to the MovableObject to remove.
+---
+---### Return Value:
+---
+---Whether the object was found in the particle list, and consequently removed. If the particle entry wasn't found,
+function MovableManager:RemoveItem(p1)end
+---### Description:
+---
+---Removes a MovableObject from the internal list of MO:s. After the
+---    MO is removed, ownership is effectively released and transferred to whatever client called this method.
+---### Arguments:
+---
+---Arg1:    A pointer to the MovableObject to remove.
+---
+---### Return Value:
+---
+---Whether the object was found in the particle list, and consequently removed. If the particle entry wasn't found,
+function MovableManager:RemoveParticle(p1)end
+---### Description:
+---
+---Indicates whether the passed in MovableObject pointer points to an
+---    MO that's currently active in the simulation, and kept by this
+---    MovableMan. Internal optimization is made so that the same MO can efficiently be checked many times during the same
+---    frame.
+---### Arguments:
+---
+---Arg1:    A pointer to the MovableObject to check for being actively kept by this MovableMan.
+---
+---### Return Value:
+---
+---Whether the MO instance was found in the active list or not.
+function MovableManager:ValidMO(p1)end
+---### Description:
+---
+---Indicates whether the passed in MovableObject is an active Actor kept by this MovableMan or not.
+---### Arguments:
+---
+---Arg1:    A pointer to the MovableObject to check for Actorness.
+---
+---### Return Value:
+---
+---Whether the object was found in the Actor list or not.
+function MovableManager:IsActor(p1)end
+---### Description:
+---
+---Adds the Actor type Object to the scene.
+---### Arguments:
+---
+---Arg1:    A pointer to the actor to add in.
+---
+---### Return Value:
+---
+---None.
+function MovableManager:AddActor(p1)end
+---### Description:
+---
+---Indicates whether the passed in MovableObject is an active Item kept by this MovableMan or not.
+---### Arguments:
+---
+---Arg1:    A pointer to the MovableObject to check for Itemness.
+---
+---### Return Value:
+---
+---Whether the object was found in the Item list or not.
+function MovableManager:IsDevice(p1)end
+---### Description:
+---
+---Indicates whether the passed in MovableObject is an active Item kept by this MovableMan or not.
+---### Arguments:
+---
+---Arg1:    A pointer to the MovableObject to check for Itemness.
+---
+---### Return Value:
+---
+---Whether the object was found in the Particle list or not.
+function MovableManager:IsParticle(p1)end
+---### Description:
+---
+---Indicates whether the passed in MOID is that of an MO which either is or is parented to an active Actor by this
+---    MovableMan, or not.
+---### Arguments:
+---
+---Arg1:    An MOID to check for Actorness.
+---
+---### Return Value:
+---
+---Whether the object was found or owned by an MO in the Actor list or not.
+function MovableManager:IsOfActor(p1)end
+---### Description:
+---
+---Produces the root MOID of the MOID of a potential child MO to another MO.
+---### Arguments:
+---
+---Arg1:    An MOID to get the root MOID of.
+---
+---### Return Value:
+---
+---The MOID of the root MO of the MO the passed-in MOID represents. This will be the same as the MOID passed in if the
+function MovableManager:GetRootMOID(p1)end
+---### Description:
+---
+---Removes a MovableObject from the any and all internal lists of MO:s.
+---    After the MO is removed, ownership is effectively released and transferred to whatever client called this method.
+---### Arguments:
+---
+---Arg1:    A pointer to the MovableObject to remove.
+---
+---### Return Value:
+---
+---Whether the object was found in MovableMan's custody, and consequently removed. If the MO entry wasn't found, false
+function MovableManager:RemoveMO(p1)end
+---### Description:
+---
+---Kills and destroys all actors of a specific team.
+---### Arguments:
+---
+---Arg1:    The team to NOT annihilate, if NOTEAM, then ALL actors die.
+---
+---### Return Value:
+---
+---How many Actors were killed.
+function MovableManager:KillAllActors(p1)end
+---### Description:
+---
+---Opens all doors and keeps them open until this is called again with false.
+---### Arguments:
+---
+---Arg1:    Whether to open all doors (true), or undo this action (false)
+---Arg2:    Which team to do this for. NOTEAM means all teams.
+---
+---### Return Value:
+---
+---None.
+function MovableManager:OpenAllDoors(p1,p2)end
+---### Description:
+---
+---Shows whetehr particles are set to get copied to the terrain upon settling
+---### Arguments:
+---
+---Arg1:    None.
+---
+---### Return Value:
+---
+---Whether enabled or not.
+function MovableManager:IsParticleSettlingEnabled()end
+---### Description:
+---
+---Sets whether particles will get copied into the terrain upon them settling down.
+---### Arguments:
+---
+---Arg1:    Whether to enable or not.
+---
+---### Return Value:
+---
+---None.
+function MovableManager:EnableParticleSettling(p1)end
+---### Description:
+---
+---Shows whether MO's sihouettes can get subtracted from the terrain at all.
+---### Arguments:
+---
+---Arg1:    None.
+---
+---### Return Value:
+---
+---Whether enabled or not.
+function MovableManager:IsMOSubtractionEnabled()end
+MovableMan = MovableManager

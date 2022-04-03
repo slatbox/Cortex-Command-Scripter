@@ -9,22 +9,35 @@
 	"categories": [
 		"Other"
 	],
+	"extensionPack": [
+		"sumneko.lua"
+	],
 	"activationEvents": [
-        "onCommand:cortex-command-scripter.helloWorld"
+		"onLanguage:lua",
+        "onCommand:cortex-command-scripter.CC-Create-Project"
 	],
 	"main": "./extension.js",
 	"contributes": {
 		"commands": [{
-            "command": "cortex-command-scripter.helloWorld",
-            "title": "Hello World"
+            "command": "cortex-command-scripter.CC-Create-Project",
+            "title": "CC Create Project"
 
-		}]
+		}],
+		"snippets": [
+			{
+				
+				"language": "lua",
+				
+				"path": "./snippets/CCSnippets.json"
+			}
+		]
 	},
 	"scripts": {
 		"lint": "eslint .",
 		"pretest": "npm run lint",
 		"test": "node ./test/runTest.js"
 	},
+	"icon": "icon/CC_Logo1.jpg",
 	"devDependencies": {
         "@types/vscode": "^1.65.0",
         "@types/glob": "^7.2.0",

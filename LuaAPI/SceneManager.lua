@@ -1,0 +1,613 @@
+---## Class
+---The singleton manager of all terrain and backgrounds in the RTE.
+local SceneManager = {}
+
+------------------------------Properties------------------------------
+---
+---    The currently loaded scene, if any.
+---    The scene, ownership IS NOT TRANSFERRED!
+---
+SceneManager.Scene = nil
+---
+---    The total dimensions (width and height) of the scene, in pixels.
+---    A Vector describing the scene dimensions.
+---
+SceneManager.SceneDim = nil
+---
+---    The total width of the scene, in pixels.
+---    An int describing the scene width.
+---
+SceneManager.SceneWidth = nil
+---
+---    The total height of the scene, in pixels.
+---    An int describing the scene width.
+---
+SceneManager.SceneHeight = nil
+---
+---    Indicates whether the scene wraps its scrolling around the X axis.
+---    Whether the scene wraps around the X axis or not.
+---
+SceneManager.SceneWrapsX = nil
+---
+---    Indicates whether the scene wraps its scrolling around the Y axis.
+---    Whether the scene wraps around the Y axis or not.
+---
+SceneManager.SceneWrapsY = nil
+---
+---    The current drawing mode of the SceneMan.
+---    The current layer draw mode, see the LayerDrawMode enumeration for the different possible mode settings.
+---
+SceneManager.LayerDrawMode = nil
+---
+---    The global acceleration (in m/s^2) that is applied to all movable objects' velocities during every frame. Typically
+---    models gravity.
+---    A Vector describing the global acceleration.
+---
+SceneManager.GlobalAcc = nil
+---
+---    Gets how many Ounces there are in a metric Kilogram
+---    A float describing the Oz/Kg ratio.
+---
+SceneManager.OzPerKg = nil
+---
+---    Gets how many metric Kilograms there are in an Ounce.
+---    A float describing the Kg/Oz ratio.
+---
+SceneManager.KgPerOz = nil
+---### Description:
+---
+---Gets the offset (scroll position) of the terrain.
+---### Arguments:
+---
+---Arg1:    None.
+---
+---### Return Value:
+---
+---A Vector describing the offset (scroll) of the terrain in pixels.
+function SceneManager:GetOffset()end
+---### Description:
+---
+---Sets the horizontal offset (scroll position) of the terrain.
+---### Arguments:
+---
+---Arg1:    A long that specifies the new horizontal offset value.
+---Arg2:    Which screen you want to set the offset of.
+---
+---### Return Value:
+---
+---None.
+function SceneManager:SetOffsetX(p1,p2)end
+---### Description:
+---
+---Sets the vertical offset (scroll position) of the terrain.
+---### Arguments:
+---
+---Arg1:    A long that specifies the new vertical offset value.
+---Arg2:    Which screen you want to set the offset of.
+---
+---### Return Value:
+---
+---None.
+function SceneManager:SetOffsetY(p1,p2)end
+---### Description:
+---
+---Gets the amount that a specific screen is occluded by a GUI panel or something of the sort. This will affect how the
+---    scroll target translates into the offset of the screen, in order to keep the target centered on the screen.
+---### Arguments:
+---
+---Arg1:    Which screen you want to get the occlusion value of.
+---
+---### Return Value:
+---
+---A Vector that indicates the amount of occlusion of the screen.
+function SceneManager:GetScreenOcclusion(p1)end
+---### Description:
+---
+---Sets the amount that a specific screen is occluded by a GUI panel or something of the sort. This will affect how the
+---    scroll target translates into the offset of the screen, in order to keep the target centered on the screen.
+---### Arguments:
+---
+---Arg1:    A Vector that specifies the amount of occlusion of the screen.
+---Arg2:    Which screen you want to set the occlusion of.
+---
+---### Return Value:
+---
+---None.
+function SceneManager:SetScreenOcclusion(p1,p2)end
+---### Description:
+---
+---Gets the SLTerrain, or 0 if no scene is loaded.
+---### Arguments:
+---
+---Arg1:    None.
+---
+---### Return Value:
+---
+---A pointer to the SLTerrain. Ownership is NOT transferred!
+function SceneManager:GetTerrain()end
+---### Description:
+---
+---Gets a specific pixel from the total material representation of this Scene. LockScene() must be called before using
+---    this method.
+---### Arguments:
+---
+---Arg1:    The X and Y coordinates of screen material pixel to get.
+---
+---### Return Value:
+---
+---An unsigned char specifying the requested pixel's material index.
+function SceneManager:GetTerrMatter(p1)end
+---### Description:
+---
+---Gets a MOID from pixel coordinates in the Scene. LockScene() must be called before using this method.
+---### Arguments:
+---
+---Arg1:    The X and Y coordinates of screen Scene pixel to get the MO from.
+---
+---### Return Value:
+---
+---The MOID currently at the specified pixel location.
+function SceneManager:GetMOIDPixel(p1)end
+---### Description:
+---
+---Sets the drawing mode of the SceneMan, to easily view what's going on in the different internal SceneLayer:s.
+---### Arguments:
+---
+---Arg1:    The layer mode to draw in, see the LayerDrawMode enumeration for the different possible settings.
+---
+---### Return Value:
+---
+---None.
+function SceneManager:SetLayerDrawMode(p1)end
+---### Description:
+---
+---Sets the offset (scroll position) of the terrain to center on specific world coordinates. If the coordinate to
+---    center on is close to the terrain border edges, the view will not scroll outside the borders.
+---### Arguments:
+---
+---Arg1:    A Vector that specifies the coordinates to center the terrain scroll on.
+---Arg2:    Which screen you want to set the offset of.
+---
+---### Return Value:
+---
+---None.
+function SceneManager:SetScroll(p1,p2)end
+---### Description:
+---
+---Interpolates a smooth scroll of the view from wherever it is now, towards centering on a new scroll target over
+---    time.
+---### Arguments:
+---
+---Arg1:    The new target vector in *scene coordinates*.
+---Arg2:    The normalized speed at screen the view scrolls. 0 being no movement, and 1.0 being instant movement to the target
+---Arg3:    in one frame.
+---Arg4:    Whether the target was wrapped around the scene this frame or not.
+---Arg5:    Which screen you want to set the offset of.
+---
+---### Return Value:
+---
+---None.
+function SceneManager:SetScrollTarget(p1,p2,p3,p4,p5)end
+---### Description:
+---
+---Gets the currently set scroll target, screen is where the center of the specific screen is trying to line up with.
+---### Arguments:
+---
+---Arg1:    Which screen to get the target for.
+---
+---### Return Value:
+---
+---Current target vector in *scene coordinates*.
+function SceneManager:GetScrollTarget(p1)end
+---### Description:
+---
+---Calculates a scalar of how distant a certain point in the world is from the currently closest scroll target of all
+---    active screens.
+---### Arguments:
+---
+---Arg1:    Which world coordinate point to check distance to/from.
+---
+---### Return Value:
+---
+---A normalized scalar representing the distance between the closest scroll target of all active screens, to the passed
+function SceneManager:TargetDistanceScalar(p1)end
+---### Description:
+---
+---Makes sure the current offset won't create a view of outside the scene.
+---    If that is found to be the case, the offset is corrected so that the view rectangle is as close to the old offset as
+---    possible, but still entirely within the scene world.
+---### Arguments:
+---
+---Arg1:    Which screen you want to set the offset of.
+---
+---### Return Value:
+---
+---None.
+function SceneManager:CheckOffset(p1)end
+---### Description:
+---
+---Loads a bitmap from file and use it as the unseen layer for a team.
+---### Arguments:
+---
+---Arg1:    The path to the bitmap to use as the unseen layer.
+---Arg2:    Which team we're talking about.
+---
+---### Return Value:
+---
+---Whether the loading was successful or not.
+function SceneManager:LoadUnseenLayer(p1,p2)end
+---### Description:
+---
+---Sets one team's view of the scene to be unseen, using a generated map of a specific resolution chunkiness.
+---### Arguments:
+---
+---Arg1:    The dimensions of the pixels that should make up the unseen layer.
+---Arg2:    The team we're talking about.
+---
+---### Return Value:
+---
+---None.
+function SceneManager:MakeAllUnseen(p1,p2)end
+---### Description:
+---
+---Tells whether a team has anything still unseen on the scene.
+---### Arguments:
+---
+---Arg1:    The team we're talking about.
+---
+---### Return Value:
+---
+---A bool indicating whether that team has anyhting yet unseen.
+function SceneManager:AnythingUnseen(p1)end
+---### Description:
+---
+---Shows what the resolution factor of the unseen map to the entire Scene is, in both axes.
+---### Arguments:
+---
+---Arg1:    The team we're talking about.
+---
+---### Return Value:
+---
+---A vector witht he factors in each element representing the factors.
+function SceneManager:GetUnseenResolution(p1)end
+---### Description:
+---
+---Checks whether a pixel is in an unseen area on of a specific team.
+---### Arguments:
+---
+---Arg1:    The X and Y coords of the scene pixel that is to be checked.
+---Arg2:    The team we're talking about.
+---
+---### Return Value:
+---
+---A bool indicating whether that point is yet unseen.
+function SceneManager:IsUnseen(p1,p2)end
+---### Description:
+---
+---Reveals a pixel on the unseen map for a specific team, if there is any.
+---### Arguments:
+---
+---Arg1:    The X and Y coord of the scene pixel that is to be revealed.
+---Arg2:    The team to reveal for.
+---
+---### Return Value:
+---
+---A bool indicating whether there was an unseen pixel revealed there.
+function SceneManager:RevealUnseen(p1,p2)end
+---### Description:
+---
+---Reveals a box on the unseen map for a specific team, if there is any.
+---### Arguments:
+---
+---Arg1:    The X and Y coords of the upper left corner of the box to be revealed.
+---Arg2:    The width and height of the box to be revealed, in scene units (pixels)
+---Arg3:    The team to reveal for.
+---
+---### Return Value:
+---
+---None.
+function SceneManager:RevealUnseenBox(p1,p2,p3)end
+---### Description:
+---
+---Hides a pixel on the unseen map for a specific team, if there is any.
+---### Arguments:
+---
+---Arg1:    The X and Y coord of the scene pixel that is to be revealed.
+---Arg2:    The team to hide for.
+---
+---### Return Value:
+---
+---A bool indicating whether there was a seen pixel hidden there.
+function SceneManager:RestoreUnseen(p1,p2)end
+---### Description:
+---
+---Restores a box on the unseen map for a specific team, if there is any.
+---### Arguments:
+---
+---Arg1:    The X and Y coords of the upper left corner of the box to be revealed.
+---Arg2:    The width and height of the box to be restored, in scene units (pixels)
+---Arg3:    The team to restore for.
+---
+---### Return Value:
+---
+---None.
+function SceneManager:RestoreUnseenBox(p1,p2,p3)end
+---### Description:
+---
+---Traces along a vector and reveals pixels on the unseen layer of a team as long as the accumulated material strengths
+---    traced through the terrain don't exceed a specific value.
+---### Arguments:
+---
+---Arg1:    The team to see for.
+---Arg2:    The starting position.
+---Arg3:    The vector to trace along.
+---Arg4:    A Vector that will be set to the position of where the sight ray was terminated. If it reached the end, it will be
+---Arg5:    set to the end of the ray.
+---Arg6:    The material strength limit where
+---Arg7:    For every pixel checked along the line, how many to skip between them for optimization reasons. 0 = every pixel is
+---Arg8:    checked.
+---
+---### Return Value:
+---
+---Whether any unseen pixels were revealed as a result of this seeing.
+function SceneManager:CastSeeRay(p1,p2,p3,p4,p5,p6,p7,p8)end
+---### Description:
+---
+---Traces along a vector and returns how the sum of all encountered pixels' material strength values. This will take
+---    wrapping into account.
+---### Arguments:
+---
+---Arg1:    The starting position.
+---Arg2:    The ending position.
+---Arg3:    For every pixel checked along the line, how many to skip between them for optimization reasons. 0 = every pixel is
+---Arg4:    checked.
+---Arg5:    A material ID to ignore, IN ADDITION to Air.
+---
+---### Return Value:
+---
+---The sum of all encountered pixels' material strength vales. So if it was all Air, then 0 is returned (Air's strength
+function SceneManager:CastStrengthSumRay(p1,p2,p3,p4,p5)end
+---### Description:
+---
+---Traces along a vector and returns the strongest of all encountered pixels' material strength values exept doors.
+---    This will take wrapping into account.
+---### Arguments:
+---
+---Arg1:    The starting position.
+---Arg2:    The ending position.
+---Arg3:    For every pixel checked along the line, how many to skip between them for optimization reasons. 0 = every pixel is
+---Arg4:    checked.
+---
+---### Return Value:
+---
+---The max of all encountered pixels' material strength vales. So if it was all Air, then 0 is returned (Air's strength
+function SceneManager:CastMaxStrengthRay(p1,p2,p3,p4)end
+---### Description:
+---
+---Traces along a vector and shows where along that ray there is an encounter with a pixel of a material with strength
+---    more than or equal to a specific value.
+---### Arguments:
+---
+---Arg1:    The starting position.
+---Arg2:    The vector to trace along.
+---Arg3:    The strength value of screen any found to be equal or more than will terminate the ray.
+---Arg4:    A reference to the vector screen will be filled out with the absolute location of the found terrain pixel of less
+---Arg5:    than or equal to above strength.
+---Arg6:    For every pixel checked along the line, how many to skip between them for optimization reasons. 0 = every pixel is
+---Arg7:    checked.
+---Arg8:    A material ID to ignore, IN ADDITION to Air.
+---Arg9:    Whetehr the ray should wrap around the scene if it crosses a seam.
+---
+---### Return Value:
+---
+---Whether a material of equal or more strength was found along the ray.
+function SceneManager:CastStrengthRay(p1,p2,p3,p4,p5,p6,p7,p8,p9)end
+---### Description:
+---
+---Traces along a vector and shows where along that ray there is an encounter with a pixel of a material with strength
+---    less than or equal to a specific value.
+---### Arguments:
+---
+---Arg1:    The starting position.
+---Arg2:    The vector to trace along.
+---Arg3:    The strength value of screen any found to be equal or less than will terminate the ray.
+---Arg4:    A reference to the vector screen will be filled out with the absolute location of the found terrain pixel of less
+---Arg5:    than or equal to above strength.
+---Arg6:    For every pixel checked along the line, how many to skip between them for optimization reasons. 0 = every pixel is
+---Arg7:    checked.
+---Arg8:    Whetehr the ray should wrap around the scene if it crosses a seam.
+---
+---### Return Value:
+---
+---Whether a material of equal or less strength was found along the ray.
+function SceneManager:CastWeaknessRay(p1,p2,p3,p4,p5,p6,p7,p8)end
+---### Description:
+---
+---Traces along a vector and returns MOID of the first non-ignored non-NoMOID MO encountered. If a non-air terrain
+---    pixel is encountered first, g_NoMOID will be returned.
+---### Arguments:
+---
+---Arg1:    The starting position.
+---Arg2:    The vector to trace along.
+---Arg3:    An MOID to ignore. Any child MO's of this MOID will also be ignored.
+---Arg4:    To enable ignoring of all MOIDs associated with an object of a specific team which also has team ignoring enabled
+---Arg5:    itself.
+---Arg6:    A specific material ID to ignore hits with.
+---Arg7:    Whether to ignore all terrain hits or not.
+---Arg8:    For every pixel checked along the line, how many to skip between them for optimization reasons. 0 = every pixel is
+---Arg9:    checked.
+---
+---### Return Value:
+---
+---The MOID of the hit non-ignored MO, or g_NoMOID if terrain or no MO was hit.
+function SceneManager:CastMORay(p1,p2,p3,p4,p5,p6,p7,p8,p9)end
+---### Description:
+---
+---Traces along a vector and shows where a specific MOID has been found.
+---### Arguments:
+---
+---Arg1:    The starting position.
+---Arg2:    The vector to trace along.
+---Arg3:    An MOID to find. Any child MO's of this MOID will also be found. ------------ ???
+---Arg4:    A reference to the vector screen will be filled out with the absolute location of the found MO pixel of the above
+---Arg5:    MOID.
+---Arg6:    A specific material ID to ignore hits with.
+---Arg7:    Whether to ignore all terrain hits or not.
+---Arg8:    For every pixel checked along the line, how many to skip between them for optimization reasons. 0 = every pixel is
+---Arg9:    checked.
+---
+---### Return Value:
+---
+---Whether the target MOID was found along the ray or not.
+function SceneManager:CastFindMORay(p1,p2,p3,p4,p5,p6,p7,p8,p9)end
+---### Description:
+---
+---Traces along a vector and returns the length of how far the trace went without hitting any non-ignored terrain
+---    material or MOID at all.
+---### Arguments:
+---
+---Arg1:    The starting position.
+---Arg2:    The vector to trace along.
+---Arg3:    A reference to the vector screen will be filled out with the absolute location of the first obstacle, or the end of
+---Arg4:    the ray if none was hit.
+---Arg5:    A reference to the vector screen will be filled out with the absolute location of the last free position before
+---Arg6:    hitting an obstacle, or the end of the ray if none was hit. This is only altered if thre are any free pixels
+---Arg7:    encountered.
+---Arg8:    An MOID to ignore. Any child MO's of this MOID will also be ignored.
+---Arg9:    To enable ignoring of all MOIDs associated with an object of a specific team which also has team ignoring enabled
+---Arg10:    itself.
+---Arg11:    A specific material ID to ignore hits with.
+---Arg12:    For every pixel checked along the line, how many to skip between them for optimization reasons. 0 = every pixel is
+---Arg13:    checked.
+---
+---### Return Value:
+---
+---How far along, in pixel units, the ray the pixel of any obstacle was encountered. If no pixel of the right material
+function SceneManager:CastObstacleRay(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13)end
+---### Description:
+---
+---Gets the abosulte pos of where the last cast ray hit somehting.
+---### Arguments:
+---
+---Arg1:    None.
+---
+---### Return Value:
+---
+---A vector witht he absoltue pos of where the last ray cast hit somehting.
+function SceneManager:GetLastRayHitPos()end
+---### Description:
+---
+---Calculates the altitide of a certain point above the terrain, measured in pixels.
+---### Arguments:
+---
+---Arg1:    The max altitude you care to check for. 0 Means check the whole scene's height.
+---Arg2:    The accuracy within screen measurement is acceptable. Higher number here means less calculation.
+---
+---### Return Value:
+---
+---The altitude over the terrain, in pixels.
+function SceneManager:FindAltitude(p1,p2)end
+---### Description:
+---
+---Takes an arbitrary point in the air and calculates it to be straight down at a certain maximum distance from the
+---    ground.
+---### Arguments:
+---
+---Arg1:    The point to start from. Should be in the air, or the same point will be returned (null operation)
+---Arg2:    The max altitude in px you want the point to be above the ground.
+---Arg3:    The accuracy within screen measurement is acceptable. Higher number here means less calculation.
+---
+---### Return Value:
+---
+---The new point screen is no higher than accuracy + max altitude over the terrain.
+function SceneManager:MovePointToGround(p1,p2,p3)end
+---### Description:
+---
+---Returns whether the integer coordinates passed in are within the bounds of the current Scene, considering its
+---    wrapping.
+---### Arguments:
+---
+---Arg1:    Int coordinates.
+---Arg2:    A margin
+---
+---### Return Value:
+---
+---Whether within bounds or not, considering wrapping.
+function SceneManager:IsWithinBounds(p1,p2)end
+---### Description:
+---
+---Returns a position snapped to the current scene grid.
+---### Arguments:
+---
+---Arg1:    The vector coordinates of the position to snap.
+---Arg2:    Whether to actually snap or not. This is useful for cleaner toggle code.
+---
+---### Return Value:
+---
+---The new snapped position.
+function SceneManager:SnapPosition(p1,p2)end
+---### Description:
+---
+---Calculates the shortest distance between two points in scene coordinates, taking into account all wrapping and out
+---    of bounds of the two points.
+---### Arguments:
+---
+---Arg1:    The two Vector coordinates of the two positions to find the shortest distance between.
+---Arg2:    Whether to check if the passed in points are outside the scene, and to wrap them if they are.
+---
+---### Return Value:
+---
+---The resulting vector screen shows the shortest distance, spanning over wrapping borders etc. Basically the ideal
+function SceneManager:ShortestDistance(p1,p2)end
+---### Description:
+---
+---Registers a post effect to be added at the very last stage of 32bpp rendering by the FrameMan.
+---### Arguments:
+---
+---Arg1:    The absolute scene coordinates of the center of the effect.
+---Arg2:    A 32bpp BITMAP screen should be drawn centered on the above scene location in the final framebuffer. Ownership is
+---Arg3:    NOT transferred!
+---Arg4:    The intensity level this effect should have when blended in post.
+---Arg5:    0 - 255.
+---
+---### Return Value:
+---
+---None.
+function SceneManager:RegisterPostEffect(p1,p2,p3,p4,p5)end
+---### Description:
+---
+---Takes any scene object and adds it to the scene in the appropriate way.
+---    If it's a TerrainObject, then it gets applied to the terrain, if it's an MO, it gets added to the correct type group
+---    in MovableMan.
+---### Arguments:
+---
+---Arg1:    The SceneObject to add. Ownership IS transferred!
+---
+---### Return Value:
+---
+---Whether the SceneObject was successfully added or not. Either way, ownership was transferred. If no success, the
+function SceneManager:AddSceneObject(p1)end
+---### Description:
+---
+---Takes TerrainObject and applies it to the terrain
+---    TRANSFERED!
+---### Arguments:
+---
+---Arg1:    TerrainObject to add.
+---
+---### Return Value:
+---
+---True on success.
+function SceneManager:AddTerrainObject(p1)end
+---### Description:
+---
+---Clears the list of registered post processing scene effects.
+---### Arguments:
+---
+---Arg1:    None.
+---
+---### Return Value:
+---
+---None.
+function SceneManager:ClearPostEffects()end
+SceneMan = SceneManager

@@ -1,0 +1,142 @@
+---## Class
+---The singleton manager of all presets of Entity:s in the RTE.
+---The presets serve as a respository of Entity instances with specific and unique and initial runtime data.
+local PresetManager = {}
+
+------------------------------Properties------------------------------
+---### Description:
+---
+---Gets a specific loaded DataModule
+---### Arguments:
+---
+---Arg1:The ID of the module to get.
+---
+---### Return Value:
+---
+---The requested DataModule. Ownership is NOT transferred!
+function PresetManager:GetDataModule(p1)end
+---### Description:
+---
+---Gets the ID of a loaded DataModule.
+---### Arguments:
+---
+---Arg1:The name of the DataModule to get the ID from, including the ".rte"
+---
+---### Return Value:
+---
+---The requested ID. If no module of the name was found, -1 will be returned.
+function PresetManager:GetModuleID(p1)end
+---### Description:
+---
+---Gets the ID of a loaded DataModule, from a full data file path.
+---### Arguments:
+---
+---Arg1:The full path to a data file inside the data module id you want to get.
+---
+---### Return Value:
+---
+---The requested ID. If no module of the name was found, -1 will be returned.
+function PresetManager:GetModuleIDFromPath(p1)end
+---### Description:
+---
+---Gets the total number of modules loaded so far, official or not.
+---### Arguments:
+---
+---Arg1:None.
+---
+---### Return Value:
+---
+---The number of modules loaded so far, both official and non.
+function PresetManager:GetTotalModuleCount()end
+---### Description:
+---
+---Gets the total number of OFFICIAL modules loaded so far.
+---### Arguments:
+---
+---Arg1:None.
+---
+---### Return Value:
+---
+---The number of official modules loaded so far.
+function PresetManager:GetOfficialModuleCount()end
+---### Description:
+---
+---Adds an Entity instance's pointer and name associations to the internal list of already read in Entity:s. Ownership is NOT transferred!
+---If there already is an instance defined, nothing happens. If there is not, a clone is made of the passed-in Entity and added to the library.
+---### Arguments:
+---
+---Arg1:A pointer to the Entity derived instance to add. It should be created from a Reader. Ownership is NOT transferred!
+---Arg2:Which module to add the entity to.
+---Arg3:Whether to overwrite if an instance of the EXACT same TYPE and name was found. If one of the same name but not the exact type, false is returned regardless and nothing will have been added.
+---Arg4:The file this instance was read from, or where it should be written.
+---Arg5:If "Same" is passed as the file path read from, an overwritten instance will keep the old one's file location entry.
+---
+---### Return Value:
+---
+---Whether or not a copy of the passed-in instance was successfully inserted into the module. False will be returned if there already was an instance of that class and instance name inserted previously, unless overwritten.
+function PresetManager:AddPreset(p1,p2,p3,p4,p5)end
+---### Description:
+---
+---Returns a previously read in (defined) Entity which is randomly selected from a specific group.
+---### Arguments:
+---
+---Arg1:The group to randomly select an Entity from. "All" will look in all.
+---Arg2:The name of the least common denominator type of the Entitys you want.
+---Arg3:"All" will look at all types.
+---Arg4:Whether to only get those of one specific DataModule (0-n), or all (-1).
+---
+---### Return Value:
+---
+---The Entity preset that was randomly selected. Ownership is NOT transferred!
+function PresetManager:GetRandomOfGroup(p1,p2,p3,p4)end
+---### Description:
+---
+---Returns a previously read in (defined) Entity which is associated with a specific group, randomly selected and only exist in a specific module space.
+---### Arguments:
+---
+---Arg1:Ownership of the list or the Entitys placed in it are NOT transferred!
+---Arg2:The group to randomly select from. "All" will look in all.
+---Arg3:The name of the least common denominator type of the Entity:s you want.
+---Arg4:"All" will look at all types.
+---Arg5:Which module to get the instances for, in addition to all groups in official modules loaded earlier than the one specified here. -1 means get ALL groups ever reg'd.
+---
+---### Return Value:
+---
+---The randomly select preset, if any was found with thse search params.
+function PresetManager:GetRandomOfGroupInModuleSpace(p1,p2,p3,p4,p5)end
+---### Description:
+---
+---Gets the data file path of a previously read in (defined) Entity.
+---### Arguments:
+---
+---Arg1:The type name of the derived Entity. Ownership is NOT transferred!
+---Arg2:The preset name of the derived Entity preset.
+---Arg3:Which module to try to get the entity from. If it's not found there, the official modules will be searched also.
+---
+---### Return Value:
+---
+---The file path of the data file that the specified Entity was read from.
+function PresetManager:GetEntityDataLocation(p1,p2,p3)end
+---### Description:
+---
+---Reads a preset of an Entity and tries to add it to the list of read-in instances. Regardless of whether there is a name collision, the read-in preset will be returned, ownership TRANSFERRED!
+---### Arguments:
+---
+---Arg1:The Reader which is about to read in a preset.
+---
+---### Return Value:
+---
+---A pointer to the Entity preset read in. 0 if there was an error, or the instance name was 'None'. Ownership IS transferred!
+function PresetManager:ReadReflectedPreset(p1)end
+---### Description:
+---
+---Reloads all scripted Entity Presets witht he latest version of their respective script files.
+---### Arguments:
+---
+---Arg1:None.
+---
+---### Return Value:
+---
+---None.
+function PresetManager:ReloadAllScripts()end
+PresetMan = PresetManager

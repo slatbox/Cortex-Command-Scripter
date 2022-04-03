@@ -1,0 +1,78 @@
+{
+    "cc setup brains": {
+        "prefix": "cc setup brains",
+        "body": [
+            "self.player_team = 0",
+            "for player = 0, self.PlayerCount - 1 do",
+            "    -- Check if we already have a brain assigned",
+            "    if not self:GetPlayerBrain(player) then",
+            "       ",
+            "       local brain = CreateActor(\"Brain Case\" , \"Base.rte\");",
+            "       ",
+            "       brain.Pos = Vector(416.4 + player * 30 , 902.4);",
+            "     ",
+            "       MovableMan:AddActor(brain);",
+            "        ",
+            "       self:SetPlayerBrain(brain, player);",
+            "",
+            "       SceneMan:SetScroll(self:GetPlayerBrain(player).Pos, player);",
+            "        ",
+            "       self:SetObservationTarget(self:GetPlayerBrain(player).Pos, player);",
+            "       ",
+            "       self:SwitchToActor(brain, player, self.player_team);",
+            "    end",
+            "end"
+        ],
+        "description": "set up brains for all players"
+    },
+    "cc create a man": {
+        "prefix": "cc create a man",
+        "body": [
+            "local actor = CreateAHuman(\"Dummy\", \"Dummy.rte\");",
+            "actor:AddInventoryItem(RandomHDFirearm(\"Weapons - Primary\", \"Dummy\"));",
+            "actor:AddInventoryItem(RandomHDFirearm(\"Weapons - Secondary\",\"Dummy\"));",
+            "actor.AIMode = Actor.AIMODE_BRAINHUNT;",
+            "actor.Pos = Vector(416.4 + 2 * 30 , 902.4);",
+            "actor.Team = 0;",
+            "MovableMan:AddActor(actor)"
+        ],
+        "description": "create a man"
+    },
+    "cc create reinforcement":{
+        "prefix": "cc create reinforcement",
+        "body":[
+            "local ship = CreateACDropShip(\"Dummy Dropship\", \"Dummy.rte\");",
+	        "local actor = CreateAHuman(\"Dummy\", \"Dummy.rte\");",
+	        "actor:AddInventoryItem(RandomHDFirearm(\"Weapons - Primary\", \"Dummy\"));",
+	        "actor:AddInventoryItem(RandomHDFirearm(\"Weapons - Secondary\",\"Dummy\"));",
+	        "actor.AIMode = Actor.AIMODE_BRAINHUNT;",
+            "ship.Team = 0;",
+	        "actor.Team = 0;",
+	        "ship.Pos = Vector(416.4 + 2 * 30 , 902.4);",
+	        "ship:AddInventoryItem(actor);",
+	        "ship:SetControllerMode(Controller.CIM_AI,-1);",
+	        "MovableMan:AddActor(ship)"
+        ],
+        "description": "create a reinforcement"
+    },
+    "cc create area pos":{
+        "prefix": "cc create area pos",
+        "body":[
+            "local area = SceneMan.Scene:GetArea('area name');",
+	        "local pos = Vector(area:GetRandomPoint().X,area:GetRandomPoint().Y);"
+        ],
+        "description": "create a random pos in an area"
+    },
+    "cc setup AI":{
+        "prefix": "cc setup AI",
+        "body":[
+            "local cpu_team = 1;",
+	        "for actor in MovableMan.AddedActors do",
+	        	"if actor.Team == cpu_team then",
+	        		"actor.AIMode = Actor.AIMODE_SENTRY",
+	        	"end",
+	        "end"
+        ],
+        "description": "setup actors' AI"
+    }
+}

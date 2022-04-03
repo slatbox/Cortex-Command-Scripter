@@ -1,0 +1,1021 @@
+---## Class
+---Base class for all GameActivity:s, including game modes and editors.
+GameActivity = {}
+
+------------------------------Properties------------------------------
+---
+---Indicates which team is the winner, when the game is over.
+---The team number of the winning team. 0 is team #1. Negative number means the game isn't over yet.
+---
+GameActivity.WinnerTeam = nil
+---
+---The current CPU-assisted team, if any (NOTEAM) - LEGACY function
+---The current setting. NOTEAM is no team is assisted.
+---
+GameActivity.CPUTeam = nil
+---
+---Returns current delivery delay
+---Returns current delivery delay
+---
+GameActivity.DeliveryDelay = nil
+---
+---
+GameActivity.BuyMenuEnabled = nil
+------------------------------Properties------------------------------
+---### From Parent Class:Activity
+---
+---    The class name of this Entity.
+---    A string with the friendly-formatted type name of this object.
+---
+GameActivity.ClassName = nil
+---### From Parent Class:Activity
+---
+---    The user-friendly description of this.
+---    A string with the user-friendly description of this.
+---
+GameActivity.Description = nil
+---### From Parent Class:Activity
+---
+---    Shows in which stage of the Campaign this appears.
+---    An int with the stage number. < 0 means it's not in the campaign 
+GameActivity.InCampaignStage = nil
+---### From Parent Class:Activity
+---
+---            The current activity state code. See the ActivityState enumeration for the legend.
+---            An int with the game state code.
+---        
+---### Enum Property:
+---#### Values:
+---		Activity.NOACTIVITY
+---		Activity.NOTSTARTED
+---		Activity.STARTING
+---		Activity.EDITING
+---		Activity.PREGAME
+---		Activity.RUNNING
+---		Activity.INERROR
+---		Activity.OVER
+GameActivity.ActivityState = nil
+---### From Parent Class:Activity
+---
+---            The name of the current scene.
+---            A string with the instance name of the scene.
+---        
+GameActivity.SceneName = nil
+---### From Parent Class:Activity
+---
+---            The total number of active players in the current game, AI or Human
+---            The total number of players in the current game.
+---        
+GameActivity.PlayerCount = nil
+---### From Parent Class:Activity
+---
+---            The total number of human players in the current game
+---            The total number of players in the current game.
+---        
+GameActivity.HumanCount = nil
+---### From Parent Class:Activity
+---
+---            The total number of teams in the current game
+---            The total number of teams in the current game.
+---        
+GameActivity.TeamCount = nil
+---### From Parent Class:Activity
+---
+---            The current difficulty setting
+---            The current setting.
+---        
+GameActivity.Difficulty = nil
+---### Description:
+---
+---Sets the observation sceneman scroll targets, for when the game is over or a player is in observation mode
+---### Arguments:
+---
+---Arg1:The new absolute position to observe.
+---Arg2:Which player to set it for.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:SetObservationTarget(p1,p2)end
+---### Description:
+---
+---Sets the player death sceneman scroll targets, for when a player- controlled actor dies and the view should go to his last position
+---### Arguments:
+---
+---Arg1:The new absolute position to set as death view.
+---Arg2:Which player to set it for.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:SetDeathViewTarget(p1,p2)end
+---### Description:
+---
+---Sets the he last selected landing zone.
+---### Arguments:
+---
+---Arg1:The new absolute position to set as the last selected landing zone.
+---Arg2:Which player to set it for.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:SetLandingZone(p1,p2)end
+---### Description:
+---
+---Gets the he last selected landing zone.
+---### Arguments:
+---
+---Arg1:Which player to get it for.
+---
+---### Return Value:
+---
+---The new absolute position to set as the last selected landing zone.
+function GameActivity:GetLandingZone(p1)end
+---### Description:
+---
+---Sets the actor selection cursor position.
+---### Arguments:
+---
+---Arg1:The new absolute position to put the cursor at.
+---Arg2:Which player to set it for.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:SetActorSelectCursor(p1,p2)end
+---### Description:
+---
+---Gets the an in-game GUI Object for a specific player.
+---### Arguments:
+---
+---Arg1:Which player to get the GUI for.
+---
+---### Return Value:
+---
+---A pointer to a BuyMenuGUI. Ownership is NOT transferred!
+function GameActivity:GetBuyGUI(p1)end
+---### Description:
+---
+---Gets the an in-game editor GUI Object for a specific player.
+---### Arguments:
+---
+---Arg1:Which player to get the GUI for.
+---
+---### Return Value:
+---
+---A pointer to a SceneEditorGUI. Ownership is NOT transferred!
+function GameActivity:GetEditorGUI(p1)end
+---### Description:
+---
+---Gets the next other team number from the one passed in, if any. If there are more than two teams in this game, then the next one in the series will be returned here.
+---### Arguments:
+---
+---Arg1:The team not to get.
+---
+---### Return Value:
+---
+---The other team's number.
+function GameActivity:OtherTeam(p1)end
+---### Description:
+---
+---Indicates whether there is less than two teams left in this game with a brain in its ranks.
+---### Arguments:
+---
+---Arg1:None.
+---
+---### Return Value:
+---
+---Whether less than two teams have brains in them left.
+function GameActivity:OneOrNoneTeamsLeft()end
+---### Description:
+---
+---Indicates which single team is left, if any.
+---### Arguments:
+---
+---Arg1:None.
+---
+---### Return Value:
+---
+---Which team stands alone with any brains in its ranks, if any. NOTEAM is returned if there's either more than one team, OR there are no teams at all left with brains in em.
+function GameActivity:WhichTeamLeft()end
+---### Description:
+---
+---Indicates whether there are NO teams left with any brains at all!
+---### Arguments:
+---
+---Arg1:None.
+---
+---### Return Value:
+---
+---Whether any team has a brain in it at all.
+function GameActivity:NoTeamLeft()end
+---### Description:
+---
+---Indicates whether there is less than two teams left in this game with a brain in its ranks.
+---### Arguments:
+---
+---Arg1:None.
+---
+---### Return Value:
+---
+---Whether less than two teams have brains in them left.
+function GameActivity:OnlyOneTeamLeft()end
+---### Description:
+---
+---Gets access to the huge banner of any player that can display messages which can not be missed or ignored.
+---### Arguments:
+---
+---Arg1:Which color banner to get - see the GameActivity::BannerColor enum.
+---Arg2:Which player's banner to get.
+---
+---### Return Value:
+---
+---A pointer to the GUIBanner object that we can
+function GameActivity:GetBanner(p1,p2)end
+---### Description:
+---
+---Sets the Area within which a team can land things.
+---### Arguments:
+---
+---Arg1:The number of the team we're setting for.
+---Arg2:The Area we're setting to limit their landings within.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:SetLZArea(p1,p2)end
+---### Description:
+---
+---Gets the Area within which a team can land things. OINT.
+---### Arguments:
+---
+---Arg1:The number of the team we're setting for.
+---
+---### Return Value:
+---
+---The Area we're using to limit their landings within. OINT.
+function GameActivity:GetLZArea(p1)end
+---### Description:
+---
+---Sets the width of the landing zone box that follows around a player's brain.
+---### Arguments:
+---
+---Arg1:The number of the in-game player we're setting for.
+---Arg2:The width of the box, in pixels. 0 means disabled.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:SetBrainLZWidth(p1,p2)end
+---### Description:
+---
+---Gets the width of the landing zone box that follows around a player's brain.
+---### Arguments:
+---
+---Arg1:The number of the player we're getting for.
+---
+---### Return Value:
+---
+---The width in pixels of the landing zone.
+function GameActivity:GetBrainLZWidth(p1)end
+---### Description:
+---
+---Returns active CPU team count.
+---### Arguments:
+---
+---Arg1:None.
+---
+---### Return Value:
+---
+---Returns active CPU team count.
+function GameActivity:GetActiveCPUTeamCount()end
+---### Description:
+---
+---Returns active human team count.
+---### Arguments:
+---
+---Arg1:None.
+---
+---### Return Value:
+---
+---Returns active human team count.
+function GameActivity:GetActiveHumanTeamCount()end
+---### Description:
+---
+---Created an objective point for one of the teams to show until cleared.
+---### Arguments:
+---
+---Arg1:The team number of the team to give objective. 0 is team #1.
+---Arg2:The very short description of what the objective is (three short words max)
+---Arg3:The absolute scene coordiante position of the objective.
+---Arg4:The desired direction of the arrow when the point is on screen.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:AddObjectivePoint(p1,p2,p3,p4)end
+---### Description:
+---
+---Sorts all objective points according to their positions on the Y axis.
+---### Arguments:
+---
+---Arg1:None.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:YSortObjectivePoints()end
+---### Description:
+---
+---Clears all objective points previously added, for both teams.
+---### Arguments:
+---
+---Arg1:None.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:ClearObjectivePoints()end
+---### Description:
+---
+---Adds somehting to the purchase list that will override what is set in the buy guy next time CreateDelivery is called.
+---### Arguments:
+---
+---Arg1:The SceneObject preset to add to the override purchase list. OINT!
+---Arg2:Which player's list to add an override purchase item to.
+---
+---### Return Value:
+---
+---The new total value of what's in the override purchase list.
+function GameActivity:AddOverridePurchase(p1,p2)end
+---### Description:
+---
+---Clears all items from a specific player's override purchase list.
+---### Arguments:
+---
+---Arg1:Which player's override purchase list to clear.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:ClearOverridePurchase(p1)end
+---### Description:
+---
+---Shows how many deliveries this team has pending.
+---### Arguments:
+---
+---Arg1:Which team to check the delivery count for.
+---
+---### Return Value:
+---
+---The number of deliveries this team has coming.
+function GameActivity:GetDeliveryCount(p1)end
+---### Description:
+---
+---Returns the name of the tech module selected for this team during scenario setup
+---### Arguments:
+---
+---Arg1:Team to return tech module for
+---
+---### Return Value:
+---
+---Tech module name, for example Dummy.rte, or empty string if there is no team
+function GameActivity:GetTeamTech(p1)end
+---### Description:
+---
+---Sets tech module name for specified team. Module must set must be loaded.
+---### Arguments:
+---
+---Arg1:Team to set module, module name, for example Dummy.rte
+---
+---### Return Value:
+---
+---None
+function GameActivity:SetTeamTech(p1)end
+---### Description:
+---
+---Returns CrabToHumanSpawnRatio for specified module
+---### Arguments:
+---
+---Arg1:None.
+---
+---### Return Value:
+---
+---Crab-To-Human spawn ratio value set for specified module, 0.25 is default.
+function GameActivity:GetCrabToHumanSpawnRatio()end
+---### Description:
+---
+---Indicates whether a specific team is assigned a CPU player in the current game.
+---### Arguments:
+---
+---Arg1:Which team index to check.
+---
+---### Return Value:
+---
+---Whether the team is assigned a CPU player in the current activity.
+function GameActivity:TeamIsCPU(p1)end
+---### Description:
+---
+---Returns how much starting gold was selected in scenario setup dialog. 20000 - infinite amount.
+---### Arguments:
+---
+---Arg1:None.
+---
+---### Return Value:
+---
+---How much starting gold must be given to human players.
+function GameActivity:GetStartingGold()end
+---### Description:
+---
+---This is a special update step for when any player is still editing the scene.
+---### Arguments:
+---
+---Arg1:None.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:UpdateEditing()end
+---### Description:
+---
+---Goes through all Actor:s currently in the MovableMan and disables or enables each one with a Controller set to AI input.
+---### Arguments:
+---
+---Arg1:Whether to disable or enable them;
+---Arg2:Which team to do this to. If all, then pass Activity::NOTEAM
+---
+---### Return Value:
+---
+---None.
+function GameActivity:DisableAIs(p1,p2)end
+---### Description:
+---
+---Goes through all Actor:s currently in the MovableMan and sets each one not controlled by a player to be AI controlled and AIMode setting based on team and CPU team.
+---### Arguments:
+---
+---Arg1:None.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:InitAIs()end
+---### From Parent Class:Activity
+---### Description:
+---
+---Turns off a player if they were active. Should only be done if brain etc are already taken care of and
+---            disposed of properly. Will also deactivate the team this player is on, if there's no other active players
+---            still on it.
+---### Arguments:
+---
+---Arg1:            Which player index to deactivate.
+---
+---### Return Value:
+---
+---Whether the player was active before trying to deactivate.
+function GameActivity:DeactivatePlayer(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Indicates whether a specific player is active in the current game.
+---### Arguments:
+---
+---Arg1:            Which player index to check.
+---
+---### Return Value:
+---
+---Whether the player is active in the current activity.
+function GameActivity:PlayerActive(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Indicates whether a specific player is human in the current game, ie not an AI player and has a screen etc.
+---### Arguments:
+---
+---Arg1:            Which player index to check.
+---
+---### Return Value:
+---
+---Whether the player is active as a Human in the current activity.
+function GameActivity:PlayerHuman(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Indicates whether a specific team is active in the current game.
+---### Arguments:
+---
+---Arg1:            Which team index to check.
+---
+---### Return Value:
+---
+---Whether the team is active in the current activity.
+function GameActivity:TeamActive(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Gets the current team a specific player belongs to.
+---### Arguments:
+---
+---Arg1:            The player to get the team info on.
+---
+---### Return Value:
+---
+---An int with the team number.
+function GameActivity:GetTeamOfPlayer(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Sets the current team a specific player belongs to.
+---### Arguments:
+---
+---Arg1:            The player to set the team info on, and the team.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:SetTeamOfPlayer(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Gets the current number of players in a specific team.
+---### Arguments:
+---
+---Arg1:            Which team to get the player count for.
+---
+---### Return Value:
+---
+---An int with the player count.
+function GameActivity:PlayersInTeamCount(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Converts a player index into a screen index, and only if that player is human.
+---### Arguments:
+---
+---Arg1:            Which player index to convert.
+---
+---### Return Value:
+---
+---An int with the screen index, or -1 if nonhuman player or no players.
+function GameActivity:ScreenOfPlayer(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Gets the current viewing state for a specific player. See the
+---            ViewState enumeration for the legend.
+---### Arguments:
+---
+---Arg1:            Which player to get the view state for.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:GetViewState(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Sets the current viewing state for a specific player. See the
+---            ViewState enumeration for the legend.
+---### Arguments:
+---
+---Arg1:            The state you want to set to.
+---Arg2:            Which player to get the view state for.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:SetViewState(p1,p2)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Gets the current Brain actor for a specific player.
+---### Arguments:
+---
+---Arg1:            Which player to get the brain actor for.
+---
+---### Return Value:
+---
+---A pointer to the Brain Actor. Ownership is NOT transferred!
+function GameActivity:GetPlayerBrain(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Sets the current Brain actor for a specific player.
+---### Arguments:
+---
+---Arg1:            A pointer to the new brain Actor. Ownership is NOT transferred!
+---Arg2:            Which team to set the brain actor for.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:SetPlayerBrain(p1,p2)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Shows whether a specific player ever had a brain yet.
+---### Arguments:
+---
+---Arg1:            Which player to check whether they ever had a brain.
+---
+---### Return Value:
+---
+---Whether this player ever had a brain.
+function GameActivity:PlayerHadBrain(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Sets whether a player's brain was evacuated during the Activity.
+---### Arguments:
+---
+---Arg1:            Which player to check whether their brain was evac'd.
+---Arg2:            Whether it was evacuated yet.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:SetBrainEvacuated(p1,p2)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Shows whether a specific player's brain was evacuated into orbit so far.
+---### Arguments:
+---
+---Arg1:            Which player to check whether their brain was evac'd.
+---
+---### Return Value:
+---
+---Whether this player had a brain that was evacuated.
+function GameActivity:BrainWasEvacuated(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Shows whether the passed in actor is the brain of any player.
+---### Arguments:
+---
+---Arg1:            Which Actor to check for player brainedness.
+---
+---### Return Value:
+---
+---Whetehr any player's brain or not.
+function GameActivity:IsAssignedBrain(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Shows which player has a specific actor as a brain, if any.
+---### Arguments:
+---
+---Arg1:            Which Actor to check for player brainedness.
+---
+---### Return Value:
+---
+---Which player has this assigned as a brain, if any.
+function GameActivity:IsBrainOfWhichPlayer(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Shows whether the passed in actor is the brain of any other player.
+---### Arguments:
+---
+---Arg1:            Which Actor to check for other player brainedness.
+---Arg2:            From which player's perspective to make the query.
+---
+---### Return Value:
+---
+---Whetehr other player's brain or not.
+function GameActivity:IsOtherPlayerBrain(p1,p2)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Shows how many human-controlled brains are left in this Activity.
+---### Arguments:
+---
+---Arg1:            None.
+---
+---### Return Value:
+---
+---How many brains are left as human-controlled in this Activity.
+function GameActivity:HumanBrainCount()end
+---### From Parent Class:Activity
+---### Description:
+---
+---Shows how many A.I.-controlled brains are left in this Activity.
+---### Arguments:
+---
+---Arg1:            None.
+---
+---### Return Value:
+---
+---How many brains are left on as A.I.-controlled in this Activity.
+function GameActivity:AIBrainCount()end
+---### From Parent Class:Activity
+---### Description:
+---
+---Gets the currently controlled actor of a specific player.
+---### Arguments:
+---
+---Arg1:            Which player to get the controlled actor of.
+---
+---### Return Value:
+---
+---A pointer to the controlled Actor. Ownership is NOT transferred! 0 If no actor is currently controlled by
+function GameActivity:GetControlledActor(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Sets the amount of funds a specific team currently has in the game.
+---### Arguments:
+---
+---Arg1:            Which team to set the fund count for. 0 = first team.
+---
+---### Return Value:
+---
+---A float with the funds tally for the requested team.
+function GameActivity:SetTeamFunds(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Gets the amount of funds a specific team currently has in the game.
+---### Arguments:
+---
+---Arg1:            Which team to get the fund count from. 0 = first team.
+---
+---### Return Value:
+---
+---A float with the funds tally for the requested team.
+function GameActivity:GetTeamFunds(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Sets AI skill level for specified team
+---### Arguments:
+---
+---Arg1:            None
+---Arg2:
+---
+---### Return Value:
+---
+---Team to get skill level for
+function GameActivity:SetTeamAISkill(p1,p2)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Arguments:
+---            Team to get skill level for
+---### Arguments:
+---
+---Arg1:            Team skill level
+---Arg2:
+---
+---### Return Value:
+---
+---Changes a team's funds level by a certain amount.
+function GameActivity:GetTeamAISkill(p1,p2)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Changes a team's funds level by a certain amount.
+---### Arguments:
+---
+---Arg1:            The amount with which to change the funds balance.
+---Arg2:            Which team to alter the funds of. 0 = first team.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:ChangeTeamFunds(p1,p2)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Checks whetehr the team funds changed since last time this was called.
+---            This also resets the state, so calling this again on the same team will ield false unless it's been changed
+---            again.
+---### Arguments:
+---
+---Arg1:            Which team's funds to check.
+---
+---### Return Value:
+---
+---Whether funds amount changed for this team since last time this was called.
+function GameActivity:TeamFundsChanged(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Increments the tally of a death of an actor on a specific team.
+---### Arguments:
+---
+---Arg1:            Which team to increase the death count of. 0 = first team.
+---
+---### Return Value:
+---
+---The new death count.
+function GameActivity:ReportDeath(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Gets the number of deaths on a specific team so far on the current game.
+---### Arguments:
+---
+---Arg1:            Which team to get the death tally of. 0 = first team.
+---
+---### Return Value:
+---
+---The current death count.
+function GameActivity:GetTeamDeathCount(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Shows how many seconds of demo time is left, if indeed in demo mode.
+---### Arguments:
+---
+---Arg1:            None.
+---
+---### Return Value:
+---
+---An int wwith how many demo seconds are left, or
+function GameActivity:GetDemoTimeLeft()end
+---### From Parent Class:Activity
+---### Description:
+---
+---Indicates whether the game is currently running or not (not editing, over or paused)
+---### Arguments:
+---
+---Arg1:            None.
+---
+---### Return Value:
+---
+---Whether the game is running or not.
+function GameActivity:Running()end
+---### From Parent Class:Activity
+---### Description:
+---
+---Indicates whether the game is currently paused or not.
+---### Arguments:
+---
+---Arg1:            None.
+---
+---### Return Value:
+---
+---Whether the game is paused or not.
+function GameActivity:Paused()end
+---### From Parent Class:Activity
+---### Description:
+---
+---Indicates whether the game is over or not.
+---### Arguments:
+---
+---Arg1:            None.
+---
+---### Return Value:
+---
+---Whether the game is over or not.
+function GameActivity:ActivityOver()end
+---### From Parent Class:Activity
+---### Description:
+---
+---Indicates an Actor as having left the game scene and entered orbit.
+---            OWNERSHIP IS NOT transferred, as the Actor's inventory is just 'unloaded'.
+---### Arguments:
+---
+---Arg1:            The actor instance. Ownership IS NOT TRANSFERRED!
+---
+---### Return Value:
+---
+---None.
+function GameActivity:EnteredOrbit(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Forces the ActivityMan to focus player control to a specific Actor for a specific team. OWNERSHIP IS NOT
+---            TRANSFERRED!
+---### Arguments:
+---
+---Arg1:            Which Actor to switch focus to.
+---Arg2:            The team of this Actor will be set once it is passed in. Ownership IS NOTTRANSFERRED! The Actor should be added to MovableMan already.
+---Arg3:            Which team to switch to next actor on.
+---Arg4:        
+---
+---### Return Value:
+---
+---Whether the focus switch was successful or not.
+function GameActivity:SwitchToActor(p1,p2,p3,p4)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Forces the ActivityMan to focus player control to the next Actor of a specific team, other than the current
+---            one focused on.
+---### Arguments:
+---
+---Arg1:            Which team to switch to next actor on.
+---Arg2:            An actor pointer to skip in the sequence.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:SwitchToNextActor(p1,p2)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Forces the ActivityMan to focus player control to the previous Actor of a specific team, other than the
+---            current one focused on.
+---### Arguments:
+---
+---Arg1:            Which team to switch to next actor on.
+---Arg2:            An actor pointer to skip in the sequence.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:SwitchToPrevActor(p1,p2)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Indicates whether a team is player controlled or not.
+---### Arguments:
+---
+---Arg1:            The team nuber to check.
+---
+---### Return Value:
+---
+---Whether team is player controlled or not.
+function GameActivity:IsPlayerTeam(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Resets the message timer for one player
+---### Arguments:
+---
+---Arg1:            The player to rese tthe message timer for.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:ResetMessageTimer(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Pauses and unpauses the game.
+---### Arguments:
+---
+---Arg1:            Whether to pause the game or not.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:Pause(p1)end
+---### From Parent Class:Activity
+---### Description:
+---
+---Forces this activity's game end.
+---### Arguments:
+---
+---Arg1:            None.
+---
+---### Return Value:
+---
+---None.
+function GameActivity:End()end
+---### Description
+---Create a new GameActivity object in specific module by its present name.
+ ---### Arguments:
+ ---		present_name: its present name.
+ ---		moudle_name: specify the module the object from."All" for not specified 
+---### Return Value:
+---		the new object
+function CreateGameActivity(present_name,module_name) return GameActivity end
+---### Description
+---Create a new GameActivity object randomly in specific group and module.
+ ---### Arguments:
+ ---		group_name_name: the specific group.
+ ---		moudle_name: specify the module the object from."All" for not specified
+---### Return Value:
+ ---		the new object
+function RandomGameActivity(group_name,module_name) return GameActivity end
+---### Description
+---Clone a GameActivity object.
+ ---### Arguments:
+ ---		object:the object to clone.
+ ---### Return Value:
+ ---		the cloned object
+function CloneGameActivity(object) return GameActivity end
+---### Description
+---cast a object to GameActivity object.
+ ---### Arguments:
+ ---		object:the object to cast.
+ ---### Return Value:
+ ---		the casted object
+function ToGameActivity(object) return GameActivity end
+---### Description
+---cast a object to GameActivity const object.
+ ---### Arguments:
+ ---		object:the object to cast.
+ ---### Return Value:
+ ---		the casted object
+function ToConstGameActivity(object) return GameActivity end
+---### Description
+---tell whether the type of an object is GameActivity type.
+ ---### Arguments:
+ ---		object:the object.
+ ---### Return Value:
+ ---		boolean
+function IsGameActivity(object) end
