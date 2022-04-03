@@ -9,6 +9,7 @@
 	"categories": [
 		"Other"
 	],
+	"publisher": "Jeff.Swen",
 	"extensionPack": [
 		"sumneko.lua"
 	],
