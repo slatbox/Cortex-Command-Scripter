@@ -2,11 +2,18 @@
   "name": "cortex-command-scripter",
 	"displayName": "Cortex Command Scripter",
 	"description": "Support for writing Cortex Command lua scripts.",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"engines": {
 		"vscode": "^1.65.0"
 	},
+	"keywords": [
+		"cc",
+		"lua",
+		"cortex",
+		"cortex command"
+	],
 	"categories": [
+		"Snippets",
 		"Other"
 	],
 	"publisher": "JeffSwen",
